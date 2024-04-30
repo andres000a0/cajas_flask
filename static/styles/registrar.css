@@ -1,0 +1,133 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+  outline: none;
+}
+
+.container {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #ffa4a4;
+}
+
+*::selection{
+  background-color: #be8f8f;
+  color: aliceblue;
+}
+
+.formContainer-register {
+  background-color: rgba(255, 255, 255, .5);
+  border-radius: 8px;
+  min-width: 300px;
+  width: 60%;
+  max-width: 600px;
+  padding: 15px 40px 40px 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  .logovaq {
+    display: flex;
+    justify-content: center;
+  }
+
+  h3 {
+    font-size: 30px;
+    font-weight: normal;
+    color: #2f2f2f;
+    text-align: center;
+    font-weight: 600;
+  }
+
+
+  form {
+    margin-top: 30px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    
+
+    .inputContainer-register{
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: #ececec;
+      padding: 10px 15px;
+      border-radius: 8px;
+      margin: 5px;
+
+      .left-register {
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+        width: 80%;
+
+        label {
+          font-size: 11px;
+        }
+        
+        input {
+          border: none;
+          font-weight: bold;
+          background-color: inherit;
+          font-size: 13px;
+          color: #2f2f2f;
+          outline: none;
+        }
+        .opcion-select {
+          border: none;
+          font-weight: bold;
+          background-color: inherit;
+          font-size: 13px;
+          color: #2f2f2f;
+          outline: none;
+          padding: 10px;
+        }
+        
+      }
+      
+      svg {
+        width: 25px;
+        height: 20px;
+      }
+    }
+
+    button {
+      border: none;
+      margin: 5px 5px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 16px;
+      color: white;
+      background-color: #6358dc;
+      border-radius: 8px;
+      transition-duration: 0.3s;
+    }
+
+    button:hover {
+      background-color: #4235d6;
+    }
+
+    .login {
+      text-align: center;
+      font-size: 12px;
+      grid-column: span 2;
+      padding-top: 10px;
+
+      b {
+        cursor: pointer;
+        color: #6358dc;
+      }
+
+      b:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+}

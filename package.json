@@ -1,0 +1,8 @@
+{
+  "devDependencies": {
+    "node-sass": "^9.0.0"
+  },
+  "scripts": {
+    "compile-sass": "node-sass --output-style compressed static/sass/styles.scss static/css/styles.css"
+  }
+}

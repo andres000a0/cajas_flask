@@ -32,10 +32,10 @@
           <section class="cards">
             <!-- Datos temporales para las cards -->
             {% set dataCards = [
-                {'title': 'Card 1', 'icon': 'chart-line', 'nombre': 'Nombre 1', 'caja': 'Caja 1', 'registros': 10, 'total': 1000, 'facturas': 5},
-                {'title': 'Card 2', 'icon': 'chart-bar', 'nombre': 'Nombre 2', 'caja': 'Caja 2', 'registros': 15, 'total': 1500, 'facturas': 8},
-                {'title': 'Card 3', 'icon': 'chart-pie', 'nombre': 'Nombre 3', 'caja': 'Caja 3', 'registros': 20, 'total': 2000, 'facturas': 10},
-                {'title': 'Card 3', 'icon': 'receipt', 'nombre': 'Nombre 3', 'caja': 'Caja 3', 'registros': 20, 'total': 2000, 'facturas': 10}
+                {'title': 'Ventas por cajero', 'icon': 'chart-line', 'nombre': 'Nombre 1', 'total': 1000},
+                {'title': 'Reregistro por caja', 'icon': 'chart-bar', 'caja': 'Caja 2', 'total': 1500},
+                {'title': 'Registros totales', 'icon': 'chart-pie', 'nombre': 'Nombre 3', 'caja': 'Caja 3', 'registros': 20, 'total': 2000, 'facturas': 10},
+                {'title': 'Facturas emitidas', 'icon': 'receipt', 'nombre': 'Nombre 3', 'caja': 'Caja 3', 'registros': 20, 'total': 2000, 'facturas': 10}
             ] %}
             <!-- Renderizado de las cards -->
             {% for card in dataCards %}

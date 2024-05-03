@@ -1,0 +1,84 @@
+.dashboardIndex {
+    display: flex;
+    justify-content: center;
+}
+
+.dashboard {
+    width: 79vw;
+    height: 95vh;
+    padding: 10px;
+    margin: 10px;
+    background-color: aliceblue;
+    margin: 20px auto;
+    border-radius: 10px;
+    box-shadow: 3px 3px 8px -4px rgba(0, 0, 0, 0.75);
+}
+
+.graficoContent {
+    display: flex;
+    padding: 10px;
+    align-items: center;
+    
+}
+.graficas {
+    padding: 20px;
+    width: 50%;
+    height: 50%;
+}
+canvas{
+    width: 400px;
+    height: 400px;
+}
+.cards {
+    width: 100%;
+    display: flex;
+}
+
+.cards .cardItem {
+    display: flex;
+    border-top: 4px solid#27374d;
+}
+
+.cardItem {
+    flex: 0 0 calc(25.13% - 20px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 10px;
+    padding: 10px;
+    height: 200px;
+    border-radius: 10px;
+    box-shadow: 3px 3px 8px -4px rgba(0, 0, 0, 0.75);
+    transition: width 0.3s ease, transform 0.3s ease, background 0.3s ease;
+}
+
+.cardItem h3 {
+    margin-bottom: 5px;
+}
+
+.cardContent {
+    flex: 1; 
+    display: flex;
+    align-items: center; 
+}
+.icon-item {
+    margin: 40px 40px 40px 0;
+    color: #27374d;
+    font-size: 40px;
+}
+
+.cardItem:hover {
+    width: 56px;
+    transform: scale(1.015);
+    background: linear-gradient(to right, #d6e3eb, #e1e7eb);
+}
+
+.bar-item {
+    width: 50%;
+    max-width: 800px;
+    height: 320px;
+    background-color: #27374d;
+    border-radius: 8px;
+    margin: 10px;
+    box-shadow: 3px 3px 8px -4px rgba(0, 0, 0, 0.75);
+}

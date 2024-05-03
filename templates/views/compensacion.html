@@ -1,0 +1,86 @@
+<!-- templates/compensacion.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/tablaRegistros.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/compensacion.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+</head>
+<body>
+  <div class="dashboardContent">
+    {% extends 'views/sidebar.html' %}
+
+    {% block content %}
+    <div class="dashboard">
+        <div>
+            <h2>Compensación</h2>
+        </div>
+        <div class="cards">
+            <section class="cardContainer">
+                  <div class="calendar">
+                    <label for="date1">Fecha Inicial</label>
+                    <input type="date" id="date1" name="date1">
+                </div>
+                <div class="calendar">
+                    <label for="date2">Fecha Final</label>
+                    <input type="date" id="date2" name="date2">
+                </div>
+
+                <button onclick="buscarRegistros()">Buscar</button>
+                <button onclick="exportToExcel()">Exportar a Excel</button>
+            </section>
+            <section class="table">
+                <div class="headerTable">
+                    <h2>Cajeros</h2>
+                </div>
+                <div class="tableList">
+                    {% include "views/tablaRegistros.html" %}
+                </div>
+            </section>
+        </div>
+  </div>
+  <script>
+    function buscarRegistros() {
+        var fecha_inicio = $('#date1').val();
+        var fecha_fin = $('#date2').val();
+
+        $.ajax({
+            url: '/registros_sede',
+            type: 'POST',
+            data: {
+                fecha_inicio: fecha_inicio,
+                fecha_fin: fecha_fin
+            },
+            success: function(response) {
+                // Limpiar el contenido existente del tbody
+                $('#tablaRegistros tbody').empty();
+                
+                // Insertar las nuevas filas en el tbody
+                for (var i = 0; i < response.length; i++) {
+                    var row = response[i];
+                    var newRow = '<tr>' +
+                        '<td align="center">' + row[0] + '</td>' + // Cédula
+                        '<td align="center">' + row[1] + '</td>' + // Nombre
+                        '<td align="center">' + row[2] + '</td>' + // Registros
+                        '<td align="center">' + row[3] + '%</td>' +
+                        '</tr>';
+                    $('#tablaRegistros tbody').append(newRow);
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('Error al buscar registros:', error);
+            }
+        });
+    }
+</script>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  {% endblock %}
+  
+</body>
+</html>

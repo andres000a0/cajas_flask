@@ -1,0 +1,91 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    border: none;
+    text-decoration: none;
+    box-sizing: border-box;
+    font-family: "Poppins", sans-serif;
+    outline: none;
+}
+.dashboardContainer{
+  display: flex;
+  background-color: aliceblue;
+}
+.logo {
+    display: flex;
+    padding: 20px;
+    align-items: center;
+    width: 200px;
+    cursor: pointer;
+}
+.logo img {
+    width: 90px;
+}
+
+.logo .itemSpan {
+    color: #27374d;
+    font-size: 15px;
+    padding: 10px;
+}
+.menu {
+    display: flex;
+    flex-direction: column;
+    height: 80vh;
+    width: 300px;
+    border-radius: 10px;
+
+}
+
+.menu .item_link{
+    display: flex;
+    align-items: center;
+    margin: 10px;
+    padding: 10px 20px;
+    color: #27374d;
+}
+
+.item_link .navItem{
+    padding: 0 10px;
+    
+}
+
+.menu .item_link:hover{
+    background-color: #27374d;
+    transition: 0.3s;
+    color: aliceblue;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+@media screen and (max-width: 768px) {
+    .logo {
+        display: none; 
+      }
+    
+      .menu {
+        width: 80px; 
+        transition: width 0.3s; 
+      }
+    
+      .menu .item_link {
+        justify-content: center; 
+        padding: 10px;
+        
+      }
+      .item_link .navItem {
+        display: none;
+      }
+    
+      .menuIcon {
+        margin-right: 10px; /* Ajusta el margen derecho según sea necesario */
+      }
+    
+      .menu:hover {
+        width: 90px; /* Ancho del menú lateral cuando se pasa el mouse sobre él */
+      }
+    .menuIcon {
+        margin-right: 10px; /* Ajusta el margen derecho según sea necesario */
+      }
+  }

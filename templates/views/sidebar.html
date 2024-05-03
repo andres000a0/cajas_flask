@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Compensación cajas</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/sidebar.css') }}" />
+</head>
+<body>
+    <!-- templates/sidebar.html -->
+
+    <div class="dashboardContainer">
+        <div>
+            <div class="logo" href="window.location.href='/dashboardContent'">
+                <img src="{{ url_for('static', filename='images/logoVaquita.png') }}" alt="logo" />
+                <span class="itemSpan">Compensación Cajas</span>
+            </div>
+            <div class="menu">
+                <a href={{url_for("dashboardContent")}} class="item_link" title="Dashboard">
+                    <i class="fas fa-indent"></i>
+                    <span class="navItem">Dashboard</span>
+                </a>
+                <a href={{url_for("compensacion")}} class="item_link" title="Compensación">
+                    <i class="fas fa-star"></i>
+                    <span class="navItem">Compensación</span>
+                </a>
+                <a href={{url_for("registrosCajas")}} class="item_link" title="Registros por Cajas">
+                    <i class="fas fa-box"></i>
+                    <span class="navItem">Registros por Cajas</span>
+                </a>
+                <a href={{url_for("productividadCajas")}} class="item_link" title="Productividad Por Caja">
+                    <i class="fas fa-users"></i>
+                    <span class="navItem">Productividad Por Caja</span>
+                </a>
+                <div class="item_link" title="Cerrar Sesión" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span class="navItem">Cerrar Sesión</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+     <!-- Contenido -->
+     <div class="content">
+      
+      {% block content %}
+      {% endblock %}
+  </div>
+
+    <script>
+        function logout() {
+            window.location.href = "{{ url_for('logout') }}";
+        }
+    </script>
+</body>
+</html>

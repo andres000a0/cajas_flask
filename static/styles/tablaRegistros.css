@@ -1,0 +1,39 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    border: none;
+    text-decoration: none;
+    box-sizing: border-box;
+    font-family: "Poppins", sans-serif;
+    outline: none;
+}
+/* Estilos para la tabla */
+.tabla {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid #e3fdf5;
+  }
+  
+  /* Estilos para las celdas de la cabecera */
+  .tabla th {
+    padding: 8px;
+    text-align: center;
+    background-color: #e3fdf5;
+    border: 1px solid #ddd;
+  }
+  
+  /* Estilos para las celdas del cuerpo */
+  .tabla td {
+    padding: 8px;
+    text-align: center;
+    border: 1px solid #ddd;
+    
+  }
+  
+  /* Estilos para las filas impares */
+  .tabla tr:nth-child(odd) {
+    background-color: #e3fdf5;
+  }
+  

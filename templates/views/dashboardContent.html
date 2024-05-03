@@ -1,0 +1,99 @@
+<!-- templates/dashboardContent.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='styles/dashboardContent.css') }}"
+    />
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  </head>
+  <body>
+    <!-- dashboardContent.html -->
+    <div class="dashboardIndex">
+
+      {% extends 'views/sidebar.html' %}
+
+      {% block content %}
+      <div class="dashboard">
+        <div>
+          <h2>Dasboard</h2>
+        </div>
+        <div class="graficos-item">
+          <section class="cards">
+            <!-- Datos temporales para las cards -->
+            {% set dataCards = [
+                {'title': 'Card 1', 'icon': 'chart-line', 'nombre': 'Nombre 1', 'caja': 'Caja 1', 'registros': 10, 'total': 1000, 'facturas': 5},
+                {'title': 'Card 2', 'icon': 'chart-bar', 'nombre': 'Nombre 2', 'caja': 'Caja 2', 'registros': 15, 'total': 1500, 'facturas': 8},
+                {'title': 'Card 3', 'icon': 'chart-pie', 'nombre': 'Nombre 3', 'caja': 'Caja 3', 'registros': 20, 'total': 2000, 'facturas': 10},
+                {'title': 'Card 3', 'icon': 'receipt', 'nombre': 'Nombre 3', 'caja': 'Caja 3', 'registros': 20, 'total': 2000, 'facturas': 10}
+            ] %}
+            <!-- Renderizado de las cards -->
+            {% for card in dataCards %}
+            <div class="cardItem">
+                <div class="icon"></div>
+                <div>
+                    <h3>{{ card.title }}</h3>
+                    <div class="cardContent">
+                        <div class="icon-item">
+                            <!-- Iconos de Font Awesome -->
+                            <i class="fas fa-{{ card.icon }}"></i>
+                        </div>
+                        <div>
+                            {% if card.nombre %}<span>Nombre: {{ card.nombre }}</span>{% endif %}
+                            {% if card.caja %}<span>Caja: {{ card.caja }}</span>{% endif %}
+                            <p>{{ 'Registros: ' + card.registros|string if card.registros is defined }}</p>
+                            <p>{{ 'Total: ' + card.total|string if card.total is defined }}</p>
+                            <p>{{ 'Facturas: ' + card.facturas|string if card.facturas is defined }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </section>
+          <section class="graficoContent">
+            <div class="graficas">
+              <canvas id="productividadChart" ></canvas>
+          </div>
+          <div class="graficas">
+              <canvas id="inactividadChart" ></canvas>
+          </div>
+          </section>
+        </div>
+      </div>
+      <script>
+        // Configurar y renderizar el gráfico de productividad
+        var productividadData = {{ productividad_data | safe }};
+        var productividadCtx = document.getElementById('productividadChart').getContext('2d');
+        var productividadChart = new Chart(productividadCtx, {
+            type: 'bar',
+            data: productividadData,
+            options: {
+                // Opciones de configuración del gráfico
+            }
+        });
+
+        // Configurar y renderizar el gráfico de tiempo de inactividad
+        var inactividadData = {{ inactividad_data | safe }};
+        var inactividadCtx = document.getElementById('inactividadChart').getContext('2d');
+        var inactividadChart = new Chart(inactividadCtx, {
+            type: 'line',
+            data: inactividadData,
+            options: {
+                // Opciones de configuración del gráfico
+            }
+        });
+    </script>
+      {% endblock %}
+    </div>
+  </body>
+</html>

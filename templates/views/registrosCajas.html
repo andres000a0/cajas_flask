@@ -1,20 +1,62 @@
-<!-- templates/registrosCajas.html -->
-
+<!-- templates/registroCajas.html -->
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Dashboard</title>
-    
     <link
-    rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
-  />
-</head>
-<body>
-    
-    <h1> hola desde /registrosCaja</h1>
+      rel="stylesheet"
+      href="{{ url_for('static', filename='styles/registrosCajas.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+    />
+  </head>
+  <body>
+    <!-- Contenido -->
+    <div class="dashboardContent">
+      {% extends 'views/sidebar.html' %} {% block content %}
+      <div class="dashboard">
+        <div>
+          <h2>Registros Por Cajas</h2>
+        </div>
+        <div class="cards">
+          <section class="cardContainer">
+            <div class="calendar">
+              <label for="date1">Fecha Inicial</label>
+              <input type="date" id="date1" name="date1" />
+            </div>
+            <div class="calendar">
+              <label for="date2">Fecha Final</label>
+              <input type="date" id="date2" name="date2" />
+            </div>
 
-</body>
+            <button onclick="buscarRegistros()">Buscar</button>
+          </section>
+          <section class="graficoContent">
+            
+              <canvas id="productividadChartjs"></canvas>
+            
+          </section>
+        </div>
+      </div>
+      <script src="https://cdn.jsdelivr.net/npm/chart.js@latest/dist/Chart.min.js"></script>
+      <script>
+
+        // Configurar y renderizar el gráfico de productividad
+        var productividadData = {{ productividad_data_caja | safe }};
+        var productividadCtx = document.getElementById('productividadChartjs').getContext('2d');
+        var productividadChart = new Chart(productividadCtx, {
+            type: 'bar',
+            data: productividadData,
+            options: {
+                // Opciones de configuración del gráfico
+            }
+        });
+      </script>
+      {% endblock %}
+    </div>
+  </body>
 </html>

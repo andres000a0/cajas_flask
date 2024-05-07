@@ -12,10 +12,13 @@ app.config['MYSQL_DB'] = 'comp_cajeros'
 
 mysql = MySQL(app)
 
-def generate_chart_data():
+# Ruta para generar los datos del gráfico
+@app.route('/generar_datos_grafico')
+def generar_datos_grafico():
+    
     cur = mysql.connection.cursor()
-    # Datos de ejemplo
-     # Consulta la base de datos para obtener los datos de productividad por caja
+
+    # Consulta la base de datos para obtener los datos de productividad por caja
     cur.execute("SELECT id_caja, COUNT(*) AS productividad FROM cajeros WHERE id_co = %s GROUP BY id_caja", (session["sede"],))
     cajas_productividad = cur.fetchall()
 
@@ -29,8 +32,8 @@ def generate_chart_data():
 
     cur.close()
 
-    # Crear datos en el formato adecuado para Chart.js para productividad por registros
-    productividad_data = {
+    # Crear datos en el formato adecuado para Chart.js
+    productividad_data_caja = {
         'labels': cajas_nombres,
         'datasets': [
             {
@@ -44,22 +47,7 @@ def generate_chart_data():
         ]
     }
 
-    # Crear datos en el formato adecuado para Chart.js para tiempo de inactividad
-    inactividad_data = {
-        'labels': cajas_nombres,
-        'datasets': [
-            {
-                'label': 'Tiempo de Inactividad de las Cajas',
-                'data': cajas_nombres,
-                'fill': False,
-                'borderColor': 'rgba(255, 99, 132, 0.8)',
-                'type': 'line'
-            }
-        ]
-    }
-
     # Convertir los datos a JSON
-    productividad_data_json = json.dumps(productividad_data)
-    inactividad_data_json = json.dumps(inactividad_data)
+    productividad_data_json = json.dumps(productividad_data_caja)
 
-    return productividad_data_json, inactividad_data_json
+    return productividad_data_json

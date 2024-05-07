@@ -1,4 +1,4 @@
-<!-- templates/productividadCajas.html -->
+<!-- templates/compensacion.html -->
 
 <!DOCTYPE html>
 <html lang="en">
@@ -6,15 +6,42 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>
-    
-    <link
-    rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
-  />
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/tablaRegistros.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/compensacion.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
 </head>
 <body>
-    
-    <h1> hola desde /productividadCajas</h1>
+  <div class="dashboardContent">
+    {% extends 'views/sidebar.html' %}
 
+    {% block content %}
+    <div class="dashboard">
+        <div>
+          <h2>productividad por cajas</h2>
+        </div>
+        <div class="cards">
+            <section class="cardContainer">
+            <h2>Se encuentra en desarrollo</h2>
+
+            </section>
+        </div>
+  </div>
+  <script>
+     // Configurar y renderizar el gráfico de productividad
+     var productividadData = {{ productividad_registros | safe }};
+     var productividadCtx = document.getElementById('productividadChart').getContext('2d');
+     var productividadChart = new Chart(productividadCtx, {
+         type: 'bar',
+         data: productividadData,
+         options: {
+             // Opciones de configuración del gráfico
+         }
+     });
+  </script>
+  
+  {% endblock %}
+  
 </body>
 </html>

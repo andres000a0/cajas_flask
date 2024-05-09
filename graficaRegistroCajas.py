@@ -1,4 +1,4 @@
-from flask import Flask, session
+from flask import Flask, session, request
 from flask_mysqldb import MySQL
 import json
 
@@ -12,29 +12,39 @@ app.config['MYSQL_DB'] = 'comp_cajeros'
 
 mysql = MySQL(app)
 
-# Ruta para generar los datos del gráfico
-@app.route('/generar_datos_grafico')
-def generar_datos_grafico():
-    
+# Función para generar los datos del gráfico
+def generar_datos_grafico(fecha_inicio, fecha_fin):
     cur = mysql.connection.cursor()
 
+    
     # Consulta la base de datos para obtener los datos de productividad por caja
-    cur.execute("SELECT id_caja, COUNT(*) AS productividad FROM cajeros WHERE id_co = %s GROUP BY id_caja", (session["sede"],))
+    query = "SELECT id_caja, COUNT(*) AS productividad, MAX(STR_TO_DATE(fecha_dcto, '%%Y%%m%%d')) AS fecha_dcto FROM cajeros WHERE id_co = %s GROUP BY id_caja"
+    params = [session["sede"]]
+
+    # Agregar condiciones de filtrado por fecha si se proporcionan
+    if fecha_inicio and fecha_fin:
+        query += " AND STR_TO_DATE(fecha_dcto, '%Y%m%d') BETWEEN %s AND %s"
+        params.extend([fecha_inicio, fecha_fin])
+
+    query += " GROUP BY id_caja"
+    cur.execute(query, params)
     cajas_productividad = cur.fetchall()
 
     # Procesa los datos para la gráfica
     cajas_nombres = []
     productividad = []
+    fechas = []
 
     for caja in cajas_productividad:
         cajas_nombres.append(caja[0])
         productividad.append(caja[1])
+        fechas.append(caja[2])
 
     cur.close()
 
     # Crear datos en el formato adecuado para Chart.js
     productividad_data_caja = {
-        'labels': cajas_nombres,
+        'labels':  cajas_nombres,
         'datasets': [
             {
                 'label': 'Productividad por Registros',

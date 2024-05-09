@@ -24,38 +24,70 @@
         </div>
         <div class="cards">
           <section class="cardContainer">
-            <div class="calendar">
-              <label for="date1">Fecha Inicial</label>
-              <input type="date" id="date1" name="date1" />
-            </div>
-            <div class="calendar">
-              <label for="date2">Fecha Final</label>
-              <input type="date" id="date2" name="date2" />
-            </div>
+            <form>
+              <div class="calendar">
+                <label for="date1">Fecha Inicial</label>
+                <input type="date" id="fecha_inicio" name="fecha_inicio" />
+              </div>
+              <div class="calendar">
+                <label for="date2">Fecha Final</label>
+                <input type="date" id="fecha_fin" name="fecha_fin" />
+              </div>
 
-            <button onclick="buscarRegistros()">Buscar</button>
+              <button type="button" onclick="buscarRegistros()">Buscar</button>
+            </form>
           </section>
           <section class="graficoContent">
-            
-              <canvas id="productividadChartjs"></canvas>
-            
+            <canvas id="productividadChartjs"></canvas>
           </section>
         </div>
       </div>
       <script src="https://cdn.jsdelivr.net/npm/chart.js@latest/dist/Chart.min.js"></script>
       <script>
-
-        // Configurar y renderizar el gráfico de productividad
-        var productividadData = {{ productividad_data_caja | safe }};
+        // Configurar y renderizar el gráfico inicialmente con datos vacíos
         var productividadCtx = document.getElementById('productividadChartjs').getContext('2d');
         var productividadChart = new Chart(productividadCtx, {
             type: 'bar',
-            data: productividadData,
+            data: {
+                labels: [],
+                datasets: [{
+                    label: 'Productividad por Registros',
+                    data: [],
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1,
+                    type: 'bar'
+                }]
+            },
             options: {
                 // Opciones de configuración del gráfico
             }
         });
-      </script>
+
+        // Función para realizar la solicitud AJAX y actualizar el gráfico
+        function buscarRegistros() {
+            var fechaInicio = document.getElementById('fecha_inicio').value;
+            var fechaFin = document.getElementById('fecha_fin').value;
+
+            // Construir la URL con las fechas
+            var url = "{{ url_for('generar_datos_grafico') }}?fecha_inicio=" + fechaInicio + "&fecha_fin=" + fechaFin;
+
+            // Realizar la solicitud AJAX para obtener los nuevos datos del gráfico
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    // Actualizar el gráfico con los nuevos datos
+                    var productividadData = JSON.parse(xhr.responseText);
+                    console.log(productividadData)
+                    productividadChart.data.labels = productividadData.labels;
+                    productividadChart.data.datasets[0].data = productividadData.datasets[0].data;
+                    productividadChart.update();
+                }
+            };
+            xhr.open("GET", url, true);
+            xhr.send();
+        }
+    </script>
       {% endblock %}
     </div>
   </body>

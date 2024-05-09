@@ -1,10 +1,15 @@
 from flask import Flask, render_template, request, redirect, url_for, session, jsonify, send_file
 from graficosDashboard import generate_chart_data as generate_dashboard_data
-from graficaRegistroCajas import generar_datos_grafico as generar_datos_grafico
-# import requests
+# from graficaRegistroCajas import generar_datos_grafico as generar_datos_grafico
+from datetime import datetime, timedelta
 from flask_mysqldb import MySQL
 from functools import wraps
 import csv
+import json
+
+
+
+TIEMPO_DE_INACTIVIDAD = 1800
 
 app = Flask(__name__)
 # conexión a la base de datos
@@ -62,6 +67,24 @@ def login():
 
 # Cierre de sesion
 
+# Actualiza la marca de tiempo en cada solicitud
+@app.before_request
+def actualizar_ultima_actividad():
+    session.permanent = True
+    session.modified = True
+    session['ultima_actividad'] = datetime.now()
+
+# Verifica si ha pasado el tiempo de inactividad permitido
+@app.before_request
+def verificar_timeout():
+    ultima_actividad = session.get('ultima_actividad')
+    if ultima_actividad is not None:
+        tiempo_transcurrido = datetime.now() - ultima_actividad
+        if tiempo_transcurrido > timedelta(seconds=TIEMPO_DE_INACTIVIDAD):
+            # Si ha pasado el tiempo de inactividad, cierra la sesión del usuario
+            session.pop('loggedin', None)
+            session.pop('id', None)
+            session.pop('username', None)
 
 @app.route('/login/logout')
 def logout():
@@ -115,9 +138,65 @@ def compensacion():
 @login_required
 def registrosCajas():
     
-    productividad_data_caja = generar_datos_grafico()
     
-    return render_template('views/registrosCajas.html', productividad_data_caja=productividad_data_caja)
+    # productividad_data_caja = generar_datos_grafico()
+    
+    return render_template('views/registrosCajas.html')
+
+
+@app.route('/generar_datos_grafico', methods=['GET'])
+@login_required
+def generar_datos_grafico():
+    cur = mysql.connection.cursor()
+
+    # Obtener los parámetros de fecha de la solicitud
+    fecha_inicio = request.args.get('fecha_inicio')
+    fecha_fin = request.args.get('fecha_fin')
+
+    # Consulta la base de datos para obtener los datos de productividad por caja
+    query = "SELECT id_caja, COUNT(*) AS productividad, MAX(STR_TO_DATE(fecha_dcto, '%%YYYY%%mm%%dd')) AS fecha_dcto FROM cajeros WHERE id_co = %s"
+    params = [session["sede"]]
+
+# Agregar condiciones de filtrado por fecha si se proporcionan
+    if fecha_inicio and fecha_fin:
+        query += " AND STR_TO_DATE(fecha_dcto, '%%YYYY%%mm%%ddd') BETWEEN %s AND %s"
+        params.extend([fecha_inicio, fecha_fin])
+
+    query += " GROUP BY id_caja"
+    cur.execute(query, params)
+    cajas_productividad = cur.fetchall()
+    print(cajas_productividad)
+    # Procesa los datos para la gráfica
+    cajas_nombres = []
+    productividad = []
+    fechas = []
+
+    for caja in cajas_productividad:
+        cajas_nombres.append(caja[0])
+        productividad.append(caja[1])
+        fechas.append(caja[2])
+
+    cur.close()
+
+    # Crear datos en el formato adecuado para Chart.js
+    productividad_data_caja = {
+        'labels':  cajas_nombres,
+        'datasets': [
+            {
+                'label': 'Productividad por Registros',
+                'data': productividad,
+                'backgroundColor': 'rgba(75, 192, 192, 0.2)',
+                'borderColor': 'rgba(75, 192, 192, 1)',
+                'borderWidth': 1,
+                'type': 'bar'
+            }
+        ]
+    }
+
+    # Convertir los datos a JSON
+    productividad_data_json = json.dumps(productividad_data_caja)
+
+    return productividad_data_json
 
 
 @app.route('/productividadCajas')
@@ -205,9 +284,6 @@ def exportar_csv():
     # Devuelve el archivo CSV como una respuesta para que el navegador lo descargue
     return send_file(filename, as_attachment=True)
 
-# @app.teardown_appcontext
-# def teardown_db(exception):
-#     mysql.connection.close()
     
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=4400)

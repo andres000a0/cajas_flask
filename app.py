@@ -9,7 +9,7 @@ import json
 
 
 
-TIEMPO_DE_INACTIVIDAD = 1800
+TIEMPO_DE_INACTIVIDAD = 120
 
 app = Flask(__name__)
 # conexión a la base de datos
@@ -221,20 +221,28 @@ def registros_sede():
     fecha_inicio = request.form.get('fecha_inicio')
     fecha_fin = request.form.get('fecha_fin')
 
+    fecha_inicio = datetime.strptime(fecha_inicio, "%Y-%m-%d").strftime("%Y%m%d")
+    fecha_fin = datetime.strptime(fecha_fin, "%Y-%m-%d").strftime("%Y%m%d")
+    
+    # Determinar si el mes tiene 30 o 31 días
+    fecha_inicio_dt = datetime.strptime(fecha_inicio, "%Y%m%d")
+    dias_mes = fecha_inicio_dt.day
+    tabla_tope_registros = 'tope_mes_30' if dias_mes == 30 else 'tope_registros'
+    
     # Consulta para obtener el tope de registros de la sede actual
     cursor = mysql.connection.cursor()
     cursor.execute(
-        'SELECT tope_registros FROM topes_sede WHERE id_co = %s', (id_co,))
+        'SELECT {} FROM topes_sede WHERE id_co = {}' .format(tabla_tope_registros, id_co,))
     tope_registros = cursor.fetchone()[0]
     cursor.close()
 
     # Consulta para obtener los registros de reg_cajeros filtrados por la sede del usuario y las fechas
     cursor = mysql.connection.cursor()
     cursor.execute('''
-        SELECT identificacion, MAX(nombres) as nombres, COUNT(*) as cantidad_registros, 
-            ROUND((COUNT(*) / %s) * 100, 2) as porcentaje
+        SELECT identificacion, MAX(nombres) as nombres, COUNT(identificacion) as cantidad_registros,
+            ROUND((COUNT(identificacion) / %s) * 100, 2) as porcentaje
             FROM registro_mes 
-            WHERE id_co = %s AND f9930_ts BETWEEN %s AND %s
+            WHERE id_co = %s AND fecha_dcto >= %s AND fecha_dcto <= %s
             GROUP BY identificacion
             ORDER BY cantidad_registros DESC;
     ''', (tope_registros, id_co, fecha_inicio, fecha_fin))
@@ -250,20 +258,23 @@ def exportar_csv():
     id_co = session['sede']
     fecha_inicio = request.form.get('fecha_inicio')
     fecha_fin = request.form.get('fecha_fin')
-
+    # convertir la fecha
+    fecha_inicio = datetime.strptime(fecha_inicio, "%Y-%m-%d").strftime("%Y%m%d")
+    fecha_fin = datetime.strptime(fecha_fin, "%Y-%m-%d").strftime("%Y%m%d")
+    #consulta para buscar la tope de registros
     cursor = mysql.connection.cursor()
     cursor.execute(
-        'SELECT tope_registros FROM topes_sede WHERE id_co = %s', (id_co,))
+        'SELECT tope_mes_30 FROM topes_sede WHERE id_co = %s', (id_co,))
     tope_registros = cursor.fetchone()[0]
     cursor.close()
 
     cursor = mysql.connection.cursor()
     cursor.execute('''
-        SELECT identificacion, MAX(nombres) as nombres, COUNT(*) as cantidad_registros, 
-            ROUND((COUNT(*) / %s) * 100, 2) as porcentaje
+        SELECT identificacion, MAX(nombres) as nombres, COUNT(identificacion) as cantidad_registros,
+            ROUND((COUNT(identificacion) / %s) * 100, 2) as porcentaje
             FROM registro_mes 
-            WHERE id_co = %s AND f9930_ts BETWEEN %s AND %s
-            GROUP BY identificacion, nombres
+            WHERE id_co = %s AND fecha_dcto >= %s AND fecha_dcto <= %s
+            GROUP BY identificacion
             ORDER BY cantidad_registros DESC;
         ''', (tope_registros, id_co, fecha_inicio, fecha_fin))
     registros = cursor.fetchall()

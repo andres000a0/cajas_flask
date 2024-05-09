@@ -1,6 +1,8 @@
 function buscarRegistros() {
     var fecha_inicio = $('#date1').val();
     var fecha_fin = $('#date2').val();
+    console.log(fecha_fin)
+    console.log(fecha_inicio)
 
     $.ajax({
         url: '/registros_sede',

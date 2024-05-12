@@ -45,49 +45,66 @@
       <script src="https://cdn.jsdelivr.net/npm/chart.js@latest/dist/Chart.min.js"></script>
       <script>
         // Configurar y renderizar el gráfico inicialmente con datos vacíos
-        var productividadCtx = document.getElementById('productividadChartjs').getContext('2d');
+        var productividadCtx = document
+          .getElementById("productividadChartjs")
+          .getContext("2d");
         var productividadChart = new Chart(productividadCtx, {
-            type: 'bar',
-            data: {
-                labels: [],
-                datasets: [{
-                    label: 'Productividad por Registros',
-                    data: [],
-                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                    borderColor: 'rgba(75, 192, 192, 1)',
-                    borderWidth: 1,
-                    type: 'bar'
-                }]
-            },
-            options: {
-                // Opciones de configuración del gráfico
-            }
+          type: "bar",
+          data: {
+            labels: [],
+            datasets: [
+              {
+                label: "Productividad por Registros",
+                data: [],
+                backgroundColor: "rgba(75, 192, 192, 0.2)",
+                borderColor: "rgba(75, 192, 192, 1)",
+                borderWidth: 1,
+                type: "bar",
+              },
+            ],
+          },
+          options: {
+            // Opciones de configuración del gráfico
+          },
         });
 
         // Función para realizar la solicitud AJAX y actualizar el gráfico
         function buscarRegistros() {
-            var fechaInicio = document.getElementById('fecha_inicio').value;
-            var fechaFin = document.getElementById('fecha_fin').value;
+          var fechaInicio = document.getElementById("fecha_inicio").value;
+          var fechaFin = document.getElementById("fecha_fin").value;
+          console.log(fecha_inicio, fecha_fin)
 
-            // Construir la URL con las fechas
-            var url = "{{ url_for('generar_datos_grafico') }}?fecha_inicio=" + fechaInicio + "&fecha_fin=" + fechaFin;
+          // Construir la URL con las fechas
+          var url =
+            "{{ url_for('generar_datos_grafico') }}?fecha_inicio=" +
+            fechaInicio +
+            "&fecha_fin=" +
+            fechaFin;
 
-            // Realizar la solicitud AJAX para obtener los nuevos datos del gráfico
-            var xhr = new XMLHttpRequest();
-            xhr.onreadystatechange = function() {
-                if (xhr.readyState == 4 && xhr.status == 200) {
-                    // Actualizar el gráfico con los nuevos datos
-                    var productividadData = JSON.parse(xhr.responseText);
-                    console.log(productividadData)
-                    productividadChart.data.labels = productividadData.labels;
-                    productividadChart.data.datasets[0].data = productividadData.datasets[0].data;
-                    productividadChart.update();
-                }
-            };
-            xhr.open("GET", url, true);
-            xhr.send();
+          // Realizar la solicitud AJAX para obtener los nuevos datos del gráfico
+          var xhr = new XMLHttpRequest();
+          xhr.onreadystatechange = function () {
+            if (xhr.readyState == 4) {
+              if (xhr.status == 200) {
+                // Actualizar el gráfico con los nuevos datos
+                var productividadData = JSON.parse(xhr.responseText);
+                console.log(productividadData);
+                productividadChart.data.labels = productividadData.labels;
+                productividadChart.data.datasets[0].data =
+                  productividadData.datasets[0].data;
+                productividadChart.update();
+              } else {
+                // Manejar casos de error
+                console.error(
+                  "Error al realizar la solicitud AJAX: " + xhr.status
+                );
+              }
+            }
+          };
+          xhr.open("GET", url, true);
+          xhr.send();
         }
-    </script>
+      </script>
       {% endblock %}
     </div>
   </body>

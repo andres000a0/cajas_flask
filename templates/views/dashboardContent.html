@@ -20,10 +20,7 @@
   <body>
     <!-- dashboardContent.html -->
     <div class="dashboardIndex">
-
-      {% extends 'views/sidebar.html' %}
-
-      {% block content %}
+      {% extends 'views/sidebar.html' %} {% block content %}
       <div class="dashboard">
         <div>
           <h2>Dasboard</h2>
@@ -31,42 +28,65 @@
         <div class="graficos-item">
           <section class="cards">
             <!-- Datos temporales para las cards -->
-            {% set dataCards = [
-                {'title': 'Ventas por cajero', 'icon': 'chart-line', 'nombre': 'Nombre 1', 'total': 1000},
-                {'title': 'Reregistro por caja', 'icon': 'chart-bar', 'caja': 'Caja 2', 'total': 1500},
-                {'title': 'Registros totales', 'icon': 'chart-pie', 'nombre': 'Nombre 3', 'caja': 'Caja 3', 'registros': 20, 'total': 2000, 'facturas': 10},
-                {'title': 'Facturas emitidas', 'icon': 'receipt', 'nombre': 'Nombre 3', 'caja': 'Caja 3', 'registros': 20, 'total': 2000, 'facturas': 10}
-            ] %}
+            {% set dataCards = [ {'title': 'Registos por cajero', 'icon':'chart-line'}, 
+            {'title':
+            'Registro por caja', 'icon': 'chart-bar'}, 
+            {'title': 'Registros totales', 'icon': 'chart-pie',
+            'nombre': 'Nombre 3', 'caja': 'Caja 3', 'registros': 20, 'total':
+            2000, 'facturas': 10}, 
+            {'title': 'Facturas emitidas', 'icon':
+            'receipt', 'nombre': 'Nombre 3', 'caja': 'Caja 3', 'registros': 20,
+            'total': 2000, 'facturas': 10} ] %}
             <!-- Renderizado de las cards -->
             {% for card in dataCards %}
             <div class="cardItem">
-                <div class="icon"></div>
-                <div>
-                    <h3>{{ card.title }}</h3>
-                    <div class="cardContent">
-                        <div class="icon-item">
-                            <!-- Iconos de Font Awesome -->
-                            <i class="fas fa-{{ card.icon }}"></i>
-                        </div>
-                        <div>
-                            {% if card.nombre %}<span>Nombre: {{ card.nombre }}</span>{% endif %}
-                            {% if card.caja %}<span>Caja: {{ card.caja }}</span>{% endif %}
-                            <p>{{ 'Registros: ' + card.registros|string if card.registros is defined }}</p>
-                            <p>{{ 'Total: ' + card.total|string if card.total is defined }}</p>
-                            <p>{{ 'Facturas: ' + card.facturas|string if card.facturas is defined }}</p>
-                        </div>
-                    </div>
+              <div class="icon"></div>
+              <div>
+                <h3>{{ card.title }}</h3>
+                <div class="cardContent">
+                  <div class="icon-item">
+                    <!-- Iconos de Font Awesome -->
+                    <i class="fas fa-{{ card.icon }}"></i>
+                  </div>
+                  <div>
+                    <!-- registros por cajeros -->
+                    {% if card.title == 'Registos por cajero' %} 
+                    {% for registro in cajero_registros %}
+                    <span><b>Nombre:</b> {{ registro[0] }}</span>
+                    <span><b>Cantidad de Registros:</b> {{ registro[1] }}</span>
+                    {% endfor %} {% endif %} {% if card.caja %}
+                    <span>Caja: {{ card.caja }}</span>
+                    {% endif %}
+                    <!-- Mostrar registros por cajas -->
+                    {% if card.title == 'Registro por caja' %}
+                    {% for caja in cajas_cantidad %}
+                    <span><b>Caja:</b> {{ caja[0] }}</span>
+                    <span><b>Cantidad de Registros:</b> {{ caja[1] }}</span>
+                    {% endfor %}
+                    {% endif %}
+                    
+                    
+                    <p>
+                      {{ 'Total: ' + card.total|string if card.total is defined
+                      }}
+                    </p>
+                    <p>
+                      {{ 'Facturas: ' + card.facturas|string if card.facturas is
+                      defined }}
+                    </p>
+                  </div>
                 </div>
+              </div>
             </div>
             {% endfor %}
-        </section>
+          </section>
           <section class="graficoContent">
             <div class="graficas">
-              <canvas id="productividadChart" ></canvas>
-          </div>
-          <div class="graficas">
-              <canvas id="inactividadChart" ></canvas>
-          </div>
+              <canvas id="productividadChart"></canvas>
+            </div>
+            <div class="graficas">
+              <canvas id="inactividadChart"></canvas>
+            </div>
           </section>
         </div>
       </div>
@@ -92,7 +112,7 @@
                 // Opciones de configuración del gráfico
             }
         });
-    </script>
+      </script>
       {% endblock %}
     </div>
   </body>

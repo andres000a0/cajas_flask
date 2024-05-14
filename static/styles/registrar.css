@@ -131,3 +131,12 @@
     }
   }
 }
+.msg {
+  text-align: center;
+  padding: 10px;
+  display: none;
+}
+p{
+  font-size: 12px;
+  padding: 10px;
+}

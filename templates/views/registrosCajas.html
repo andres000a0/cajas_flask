@@ -33,8 +33,12 @@
                 <label for="date2">Fecha Final</label>
                 <input type="date" id="fecha_fin" name="fecha_fin" />
               </div>
-
-              <button type="button" onclick="buscarRegistros()">Buscar</button>
+              <div id="loader" style="display: none">
+                <i class="fas fa-spinner fa-spin"></i> Cargando...
+              </div>
+              <button id="buscarBtn" type="button" onclick="buscarRegistros()">
+                Buscar
+              </button>
             </form>
           </section>
           <section class="graficoContent">
@@ -43,7 +47,8 @@
         </div>
       </div>
       <script src="https://cdn.jsdelivr.net/npm/chart.js@latest/dist/Chart.min.js"></script>
-      <script>
+      
+       <script>
         // Configurar y renderizar el gráfico inicialmente con datos vacíos
         var productividadCtx = document
           .getElementById("productividadChartjs")
@@ -72,8 +77,9 @@
         function buscarRegistros() {
           var fechaInicio = document.getElementById("fecha_inicio").value;
           var fechaFin = document.getElementById("fecha_fin").value;
-          console.log(fecha_inicio, fecha_fin)
+          console.log(fecha_inicio, fecha_fin);
 
+          document.getElementById("loader").style.display = "block";
           // Construir la URL con las fechas
           var url =
             "{{ url_for('generar_datos_grafico') }}?fecha_inicio=" +
@@ -85,6 +91,7 @@
           var xhr = new XMLHttpRequest();
           xhr.onreadystatechange = function () {
             if (xhr.readyState == 4) {
+              document.getElementById("loader").style.display = "none";
               if (xhr.status == 200) {
                 // Actualizar el gráfico con los nuevos datos
                 var productividadData = JSON.parse(xhr.responseText);

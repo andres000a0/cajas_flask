@@ -38,3 +38,5 @@ def obtener_nombre_sede(sede):
     # Cierra la conexión y devuelve el nombre de la sede
     cur.close()
     return nombre_sede
+
+    print(nombre_sede)

@@ -25,6 +25,7 @@ function buscarRegistros() {
                     '<td align="center">' + row[1] + '</td>' + // Nombre
                     '<td align="center">' + row[2] + '</td>' + // Registros
                     '<td align="center">' + row[3] + '%</td>' +
+                    '<td align="center">' + row[4] + '%</td>' +
                     '</tr>';
                 $('#tablaRegistros tbody').append(newRow);
 

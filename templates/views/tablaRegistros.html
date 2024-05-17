@@ -15,19 +15,21 @@
         <table id="tablaRegistros" class="tabla">
             <thead>
                 <tr>
-                    <th align="center">Cedula</th>
-                    <th align="center">Nombre</th>
-                    <th align="center">Registros</th>
-                    <th align="center">Porcentaje</th>
+                    <th align="center">Nombre Tienda</th>
+                    <th align="center">Nombre Vendedor</th>
+                    <th align="center">Fecha</th>
+                    <th align="center">Peso Total</th>
+                    <th align="center">Cantidad Total</th>
                 </tr>
             </thead>
             <tbody>
                 {% for row in registros_sedes %}
                 <tr>
-                  <td align="center">{{ row['identificacion'] }}</td> <!-- Cédula -->
-                  <td align="center">{{ row['nombres'] }}</td>         <!-- Nombre -->
-                  <td align="center">{{ row['cantidad_registros'] }}</td> <!-- Registros -->
-                  <td align="center">{{ row['porcentaje'] }}%</td>
+                  <td align="center">{{ row['NombreTienda'] }}</td> <!-- Cédula -->
+                  <td align="center">{{ row['NombreVendedor'] }}</td>         <!-- Nombre -->
+                  <td align="center">{{ row['fecha_dcto'] }}</td> <!-- Registros -->
+                  <td align="center">{{ row['PesoTotal'] }}%</td>
+                  <td align="center">{{ row['CantidadTotal'] }}%</td>
                 </tr>
                 {% endfor %}
             </tbody>

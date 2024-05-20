@@ -30,9 +30,14 @@
                     <label for="date2">Fecha Final</label>
                     <input type="date" id="date2" name="date2">
                 </div>
-
-                <button type="button" onclick="buscarRegistros()">Buscar</button>
-                <button type="button" onclick="exportToExcel()">Exportar a Excel</button>
+                <div id="loaderBuscar" style="display: none;">
+                    <i class="fas fa-spinner fa-spin"></i> Buscando...
+                </div>
+                <button id="buscarBtn" type="button" onclick="buscarRegistros()">Buscar</button>
+                <div id="loaderExportar" style="display: none;">
+                    <i class="fas fa-spinner fa-spin"></i> Exportando...
+                </div>
+                <button id="exportarBtn" type="button" onclick="exportToExcel()">Exportar a Excel</button>
             </section>
             <section class="table">
                 <div class="headerTable">

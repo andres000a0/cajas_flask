@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, session, jsonify, send_file
 from graficosDashboard import generate_chart_data as generate_dashboard_data
-# from graficaRegistroCajas import generar_datos_grafico as generar_datos_grafico
+from registros_mes import registros_mes
+# from obtener_nombre import obtener_nombre_sede
 from datetime import datetime, timedelta
 from flask_mysqldb import MySQL
 from functools import wraps
@@ -124,8 +125,16 @@ def registro():
 @app.route('/dashboardContent')
 @login_required
 def dashboardContent():
+       
+    
+    cajero_registros, cajas_cantidad = registros_mes()
     productividad_data, inactividad_data = generate_dashboard_data()
-    return render_template('views/dashboardContent.html', productividad_data=productividad_data, inactividad_data=inactividad_data)
+    return render_template('views/dashboardContent.html', cajas_cantidad=cajas_cantidad,
+                           cajero_registros=cajero_registros, 
+                           productividad_data=productividad_data, 
+                           inactividad_data=inactividad_data,
+                        #    nombres_sede=nombres_sede, sedes=sedes
+                           )
 
 
 @app.route('/compensacion')
@@ -147,40 +156,34 @@ def registrosCajas():
 @app.route('/generar_datos_grafico', methods=['GET'])
 @login_required
 def generar_datos_grafico():
+    
     cur = mysql.connection.cursor()
-
-    # Obtener los parámetros de fecha de la solicitud
+    id_co = session['sede']
     fecha_inicio = request.args.get('fecha_inicio')
     fecha_fin = request.args.get('fecha_fin')
+    # Convertir fechas a formato YYYY-MM-DD
+    fecha_inicio = datetime.strptime(fecha_inicio, "%Y-%m-%d").strftime("%Y%m%d")
+    fecha_fin = datetime.strptime(fecha_fin, "%Y-%m-%d").strftime("%Y%m%d")
 
-    # Consulta la base de datos para obtener los datos de productividad por caja
-    query = "SELECT id_caja, COUNT(*) AS productividad, MAX(STR_TO_DATE(fecha_dcto, '%%YYYY%%mm%%dd')) AS fecha_dcto FROM cajeros WHERE id_co = %s"
-    params = [session["sede"]]
-
-# Agregar condiciones de filtrado por fecha si se proporcionan
-    if fecha_inicio and fecha_fin:
-        query += " AND STR_TO_DATE(fecha_dcto, '%%YYYY%%mm%%ddd') BETWEEN %s AND %s"
-        params.extend([fecha_inicio, fecha_fin])
-
-    query += " GROUP BY id_caja"
-    cur.execute(query, params)
+    # Consulta la base de datos para obtener los datos de productividad por caja en el rango de fechas especificado
+    cur.execute('''SELECT id_caja, COUNT(*) AS productividad FROM cajeros 
+                        WHERE id_co = %s AND fecha_dcto >= %s AND fecha_dcto <= %s 
+                        GROUP BY id_caja''', (id_co, fecha_inicio, fecha_fin))
     cajas_productividad = cur.fetchall()
     print(cajas_productividad)
     # Procesa los datos para la gráfica
     cajas_nombres = []
     productividad = []
-    fechas = []
 
     for caja in cajas_productividad:
         cajas_nombres.append(caja[0])
         productividad.append(caja[1])
-        fechas.append(caja[2])
 
     cur.close()
 
-    # Crear datos en el formato adecuado para Chart.js
-    productividad_data_caja = {
-        'labels':  cajas_nombres,
+    # Crear datos en el formato adecuado para Chart.js para productividad por registros
+    productividad_data = {
+        'labels': cajas_nombres,
         'datasets': [
             {
                 'label': 'Productividad por Registros',
@@ -194,9 +197,9 @@ def generar_datos_grafico():
     }
 
     # Convertir los datos a JSON
-    productividad_data_json = json.dumps(productividad_data_caja)
+    productividad_data_json = json.dumps(productividad_data)
 
-    return productividad_data_json
+    return productividad_data_json                    
 
 
 @app.route('/productividadCajas')
@@ -297,4 +300,4 @@ def exportar_csv():
 
     
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=4400)
+    app.run(debug=True, host='0.0.0.0', port=5500)

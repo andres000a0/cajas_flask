@@ -30,8 +30,22 @@
 .calendar{
     text-align: center;
 }
+form {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 10px; 
+
+}
+.calendar {
+    align-items: center;
+    text-align: center;
+    padding: 10px;
+}
 .calendar input {
     padding: 10px 30px;
+    align-items: center;
 }
 
 .graficoContent {
@@ -51,8 +65,7 @@
 }
 button {
     margin: 10px 10px;
-    border: none;
-    width: 100%; /* Ancho completo en pantallas pequeñas */
+    border: none; /* Ancho completo en pantallas pequeñas */
     padding: 10px;
     cursor: pointer;
     font-weight: 500;

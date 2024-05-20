@@ -81,9 +81,11 @@
                     </div>
                       <i class="fa fa-store"></i>
                 </div>
-                        <button type="submit">Registrarme</button>
-                    <div>{{ msg }}</div>
-                    <p>¿Tienes una cuenta? <a href="{{url_for('login')}}">inicia sesion!</a></p>
+                <button type="submit" id="registroBtn">Registrarme</button>
+                <p>¿Tienes una cuenta? <a href="{{url_for('login')}}">inicia sesion!</a></p>
+                    <div class="msg">
+                        <div class="mensaje">{{ msg }}</div>
+                    </div> 
             </form>
         </div>
     </div>

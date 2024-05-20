@@ -14,14 +14,14 @@ TIEMPO_DE_INACTIVIDAD = 120
 
 app = Flask(__name__)
 # conexión a la base de datos
-app.config['MYSQL_HOST'] = '192.168.33.251'
-app.config['MYSQL_USER'] = 'miguelos'
-app.config['MYSQL_PASSWORD'] = 'Mosorio2022$'
-app.config['MYSQL_DB'] = 'comp_cajeros'
-# app.config['MYSQL_HOST'] = '127.0.0.1'
-# app.config['MYSQL_USER'] = 'root'
-# app.config['MYSQL_PASSWORD'] = ''
+# app.config['MYSQL_HOST'] = '192.168.33.251'
+# app.config['MYSQL_USER'] = 'miguelos'
+# app.config['MYSQL_PASSWORD'] = 'Mosorio2022$'
 # app.config['MYSQL_DB'] = 'comp_cajeros'
+app.config['MYSQL_HOST'] = '127.0.0.1'
+app.config['MYSQL_USER'] = 'root'
+app.config['MYSQL_PASSWORD'] = 'root'
+app.config['MYSQL_DB'] = 'comp_carnes'
 
 # inicia la base de datos
 mysql = MySQL(app)
@@ -49,18 +49,18 @@ def login():
         password = request.form['password']
         sede = request.form['sede']
         cur = mysql.connection.cursor()
-        print(cur)
         cur.execute(
-            'SELECT * FROM users WHERE username = %s AND password = %s AND sede = %s', (username, password, sede))
+            'SELECT * FROM user_carnes WHERE username = %s AND password = %s AND sede = %s', (username, password, sede))
         account = cur.fetchone()
+        print(account)
         cur.close()
         if account:
             session['loggedin'] = True
             session['id'] = account[0]
             # Aquí se establece el nombre de usuario en la sesión
             session['username'] = account[1]
-            session['sede'] = account[4]
-            return redirect(url_for('dashboardContent'))
+            session['sede'] = account[3]
+            return redirect(url_for('compensacion'))
         else:
             msg = 'Usuario o contraseña incorrectos'
             cur.close()
@@ -140,7 +140,8 @@ def dashboardContent():
 @app.route('/compensacion')
 @login_required
 def compensacion():
-    return render_template('views/compensacion.html')
+        return render_template('views/compensacion.html')
+ 
 
 
 @app.route('/registrosCajas')
@@ -213,7 +214,7 @@ def productividadCajas():
 def tablaRegistros():
     return render_template('views/tablaRegistros.html')
 
-# consulta registros por fecha
+#consulta registros por fecha
 
 
 @app.route('/registros_sede', methods=['POST'])
@@ -230,7 +231,7 @@ def registros_sede():
     # Determinar si el mes tiene 30 o 31 días
     fecha_inicio_dt = datetime.strptime(fecha_inicio, "%Y%m%d")
     dias_mes = fecha_inicio_dt.day
-    tabla_tope_registros = 'tope_mes_30' if dias_mes == 30 else 'tope_registros'
+    tabla_tope_registros = 'tope_mes_30' if dias_mes == 30 else 'tope_mes_31'
     
     # Consulta para obtener el tope de registros de la sede actual
     cursor = mysql.connection.cursor()
@@ -242,12 +243,12 @@ def registros_sede():
     # Consulta para obtener los registros de reg_cajeros filtrados por la sede del usuario y las fechas
     cursor = mysql.connection.cursor()
     cursor.execute('''
-        SELECT identificacion, MAX(nombres) as nombres, COUNT(identificacion) as cantidad_registros,
-            ROUND((COUNT(identificacion) / %s) * 100, 2) as porcentaje
-            FROM registro_mes 
-            WHERE id_co = %s AND fecha_dcto >= %s AND fecha_dcto <= %s
-            GROUP BY identificacion
-            ORDER BY cantidad_registros DESC;
+        SELECT NombreTienda, NombreVendedor, Fecha, SUM(Peso) AS PesoTotal
+        ROUND(COUNT(Peso / %s) * 100 , 2) AS Porcentaje
+        FROM registroauxiliar 
+        WHERE NombreTienda = %s AND Fecha BETWEEN %s AND %s
+        GROUP BY NombreTienda, NombreVendedor, Fecha
+        ORDER BY PesoTotal desc;
     ''', (tope_registros, id_co, fecha_inicio, fecha_fin))
     registros = cursor.fetchall()
     cursor.close()
